@@ -105,6 +105,7 @@
 <!--
   ACTION REQUIRED: Define measurable success criteria.
   These must be technology-agnostic and measurable.
+  Must align with Progressive Todo Application Constitution principles.
 -->
 
 ### Measurable Outcomes
@@ -113,3 +114,11 @@
 - **SC-002**: [Measurable metric, e.g., "System handles 1000 concurrent users without degradation"]
 - **SC-003**: [User satisfaction metric, e.g., "90% of users successfully complete primary task on first attempt"]
 - **SC-004**: [Business metric, e.g., "Reduce support tickets related to [X] by 50%"]
+
+### Constitution Alignment
+
+- **Progressive Enhancement**: [How this feature supports the progressive enhancement strategy across phases]
+- **Simplicity First**: [How this feature maintains simplicity before introducing complexity]
+- **Separation of Concerns**: [How this feature maintains clear separation between components]
+- **Production Mindset**: [How this feature follows production-ready practices]
+- **Extensibility**: [How this feature anticipates future phases]

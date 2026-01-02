@@ -211,6 +211,15 @@ Task: "Create [Entity2] model in src/models/[entity2].py"
 
 ## Implementation Strategy
 
+### Constitution Compliance Checks
+
+- **Progressive Enhancement**: [ ] Each phase builds cleanly on the previous one without breaking abstractions
+- **Simplicity First**: [ ] Solutions remain minimal and readable before introducing complexity
+- **Separation of Concerns**: [ ] Clear separation maintained between business logic, data handling, UI, and infrastructure
+- **Production Mindset**: [ ] Production-ready practices followed in all phases
+- **Extensibility**: [ ] Architectural decisions support future phases
+- **Independence**: [ ] Each phase remains independently runnable
+
 ### MVP First (User Story 1 Only)
 
 1. Complete Phase 1: Setup

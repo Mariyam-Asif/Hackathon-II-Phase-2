@@ -31,7 +31,29 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+### Progressive Enhancement (Phase-Building)
+- [ ] Plan ensures each phase builds cleanly on the previous one without breaking abstractions
+- [ ] [Phase-specific check] Each phase will be independently runnable while building toward the final system
+
+### Simplicity First (Minimal Viable Solution)
+- [ ] Plan avoids premature optimization and over-engineering in early phases
+- [ ] [Phase-specific check] Solutions will be minimal and readable before introducing complexity
+
+### Separation of Concerns (Decoupled Architecture)
+- [ ] Plan maintains clear separation between business logic, data handling, UI, and infrastructure
+- [ ] [Phase-specific check] API boundaries will have strong typing and validation
+
+### Production Mindset (Best Practices)
+- [ ] Plan follows production-ready practices even in early phases
+- [ ] [Phase-specific check] Security, observability, and testing standards will be maintained
+
+### Extensibility (Future-Proof Design)
+- [ ] Plan anticipates future phases and maintains compatibility
+- [ ] [Phase-specific check] Architectural decisions will support progressive enhancement strategy
+
+### Independence and Scalability
+- [ ] Plan ensures each phase will be independently runnable
+- [ ] [Phase-specific check] Dependencies will be properly scoped for each phase
 
 ## Project Structure
 
