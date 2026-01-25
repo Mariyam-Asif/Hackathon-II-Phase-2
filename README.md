@@ -1,85 +1,217 @@
-# In-Memory Python Console-Based Todo Application
+# Full-Stack Todo Application with Authentication
 
-A simple, single-user console application for managing todo tasks in memory. This application provides core task management operations through a command-line interface without any persistence.
+A comprehensive full-stack Todo application featuring Next.js frontend, FastAPI backend, and secure authentication with Better Auth. This application provides complete task management functionality with user authentication and data persistence.
 
 ## Features
 
-- Add new todo tasks
-- View all current tasks
-- Update existing tasks
-- Delete tasks
-- Mark tasks as completed
-- In-memory storage (tasks persist only for the session)
+### Frontend (Next.js 16+)
+- Modern React application with App Router
+- Responsive design with Tailwind CSS
+- User authentication (login/register)
+- Protected routes and dashboards
+- Task management (CRUD operations)
+- Real-time task updates
+- Loading states and error handling
+
+### Backend (FastAPI)
+- RESTful API endpoints
+- JWT-based authentication
+- User session management
+- Secure data validation
+- Database integration with Neon PostgreSQL
+- Rate limiting for security
+
+### Authentication (Better Auth)
+- Secure user registration and login
+- JWT token generation and validation
+- Session management
+- Password hashing and security
+- User data isolation
+
+### Database (Neon PostgreSQL)
+- SQLModel ORM integration
+- Automatic schema migrations
+- Secure data storage
+- Connection pooling
+
+## Tech Stack
+
+- **Frontend**: Next.js 16+, React, TypeScript, Tailwind CSS
+- **Backend**: Python, FastAPI, uvicorn
+- **Authentication**: Better Auth with JWT
+- **Database**: Neon Serverless PostgreSQL with SQLModel ORM
+- **Deployment**: Ready for Vercel/Netlify (frontend), Railway/Render (backend)
 
 ## Prerequisites
 
-- Python 3.13 or higher
+- Node.js 18+ (for frontend)
+- Python 3.9+ (for backend)
+- PostgreSQL-compatible database (Neon recommended)
+- Git
 
 ## Setup
 
-1. Clone or download this repository
-2. Navigate to the project directory
-3. No additional installation required (uses only Python standard library)
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/yourusername/your-repo-name.git
+cd your-repo-name
+```
+
+### 2. Backend Setup
+
+```bash
+# Navigate to the backend directory
+cd backend
+
+# Create virtual environment
+python -m venv venv
+
+# Activate virtual environment
+# On Windows:
+venv\Scripts\activate
+# On macOS/Linux:
+source venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Set up environment variables
+cp .env.example .env
+# Edit .env with your configuration
+```
+
+### 3. Frontend Setup
+
+```bash
+# Navigate to the frontend directory
+cd frontend
+
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.example .env.local
+# Edit .env.local with your configuration
+```
+
+## Environment Variables
+
+### Backend (.env)
+```env
+DATABASE_URL=postgresql://user:password@localhost:5432/todo_app
+BETTER_AUTH_SECRET=your-super-secret-jwt-key-here
+JWT_ALGORITHM=HS256
+JWT_EXPIRATION_DELTA=604800  # 7 days in seconds
+```
+
+### Frontend (.env.local)
+```env
+NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+NEXT_PUBLIC_BETTER_AUTH_URL=http://localhost:8000
+```
 
 ## Running the Application
 
-To run the application, execute:
+### 1. Start the Backend
 
 ```bash
-python src/cli/main.py
+# From the backend directory
+cd backend
+source venv/bin/activate  # or venv\Scripts\activate on Windows
+uvicorn src.main:app --reload --port 8000
 ```
 
-## Usage
+### 2. Start the Frontend
 
-The application provides a menu-driven interface:
-
-1. **Add a new task** - Enter a description for a new todo task
-2. **View all tasks** - Display all current tasks with their completion status
-3. **Update a task** - Modify the description of an existing task
-4. **Delete a task** - Remove a task from the list
-5. **Mark task as completed** - Change the status of a task to completed
-6. **Exit** - Quit the application
-
-## Example Workflow
-
+```bash
+# From the frontend directory
+cd frontend
+npm run dev
 ```
-Welcome to the Todo Application!
-1. Add a new task
-2. View all tasks
-3. Update a task
-4. Delete a task
-5. Mark task as completed
-6. Exit
 
-Enter your choice: 1
-Enter task description: Buy groceries
-Task added successfully!
+The application will be available at:
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:8000
+- Backend Docs: http://localhost:8000/docs
 
-Enter your choice: 2
-Tasks:
-1. [ ] Buy groceries
+## API Endpoints
 
-Enter your choice: 5
-Enter task ID to mark as completed: 1
-Task marked as completed!
+### Authentication
+- `POST /auth/register` - User registration
+- `POST /auth/login` - User login
+- `POST /auth/logout` - User logout
 
-Enter your choice: 2
-Tasks:
-1. [x] Buy groceries
+### Tasks
+- `GET /api/{user_id}/tasks` - Get user's tasks
+- `POST /api/{user_id}/tasks` - Create a new task
+- `PUT /api/{user_id}/tasks/{task_id}` - Update a task
+- `DELETE /api/{user_id}/tasks/{task_id}` - Delete a task
+- `PATCH /api/{user_id}/tasks/{task_id}/complete` - Mark task as complete
 
-Enter your choice: 6
-Goodbye!
+## Database Migrations
+
+Run database migrations using Alembic:
+
+```bash
+# From the project root
+cd backend
+alembic upgrade head
 ```
+
+## Testing
+
+### Backend Tests
+```bash
+cd backend
+python -m pytest
+```
+
+### Frontend Tests
+```bash
+cd frontend
+npm test
+```
+
+## Deployment
+
+### Frontend Deployment
+The Next.js frontend is ready for deployment to Vercel, Netlify, or any Node.js hosting service.
+
+### Backend Deployment
+The FastAPI backend can be deployed to Railway, Render, Heroku, or any cloud provider supporting Python applications.
+
+## Security Features
+
+- JWT token-based authentication
+- Password hashing with bcrypt
+- Rate limiting for auth endpoints
+- Input validation and sanitization
+- User data isolation
+- CORS configuration
 
 ## Architecture
 
-The application follows a layered architecture:
+The application follows a modern full-stack architecture:
 
-- **Models**: Data structures (TodoTask)
-- **Services**: Business logic (TodoService)
-- **Stores**: Data persistence (InMemoryStore)
-- **CLI**: User interface (TodoCLI)
+- **Frontend**: Next.js with React components and state management
+- **Backend**: FastAPI with dependency injection and middleware
+- **Authentication**: Better Auth with JWT tokens
+- **Database**: SQLModel ORM with PostgreSQL
+- **Security**: Multiple layers of validation and protection
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## License
 
 [Specify your license here]
+
+## Support
+
+For support, please open an issue in the GitHub repository.
