@@ -5,8 +5,8 @@ from alembic import context
 import sys
 import os
 
-# Add the project root to the path so we can import our models
-sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+# Add the backend src directory to the path so we can import our models
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'src'))
 
 from backend.src.models.user_model import User
 from backend.src.models.task_model import Task

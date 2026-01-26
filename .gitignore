@@ -147,7 +147,6 @@ tmp/
 .AppleDouble
 .LSOverride
 Icon
-*/
 
 # Docker
 .dockerignore
