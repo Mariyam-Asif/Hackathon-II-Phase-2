@@ -91,8 +91,8 @@ function LoginPageContent() {
           // Expires in 7 days
           const expiryDate = new Date();
           expiryDate.setDate(expiryDate.getDate() + 7);
-          // Set a secure, http-only cookie
-          document.cookie = `${cookieName}=${token}; expires=${expiryDate.toUTCString()}; path=/; SameSite=Lax;`;
+          // Encode the token to handle special characters and set the cookie
+          document.cookie = `${cookieName}=${encodeURIComponent(token)}; expires=${expiryDate.toUTCString()}; path=/; SameSite=Lax;`;
         }
         router.push(returnUrl);
         router.refresh();

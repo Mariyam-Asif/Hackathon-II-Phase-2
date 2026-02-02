@@ -36,6 +36,7 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
+        "https://giaic-hackathon-ii-phase-ii.vercel.app",  # Production frontend
         "http://localhost:3000",  # Next.js dev server
         "http://127.0.0.1:3000",  # Alternative localhost format
         "http://localhost:3001",  # Next.js dev server (alternative port)
