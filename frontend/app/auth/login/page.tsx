@@ -43,8 +43,8 @@ function LoginPageContent() {
         }
       } else {
         // Successful login, the server has set the cookie.
-        // Now we can redirect to the dashboard.
-        router.push(returnUrl);
+        // Use a full page reload to navigate to the dashboard to ensure the page is refreshed with the new cookie.
+        window.location.href = returnUrl;
       }
     } catch (err: any) {
       console.error('Login error:', err);
