@@ -21,17 +21,27 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify({ email, password }),
     });
 
-    const data = await apiResponse.json();
-
+    // If the backend response itself is not ok, forward the error.
     if (!apiResponse.ok) {
-      // If the backend returned an error, forward it to the client
-      return NextResponse.json(data, { status: apiResponse.status });
+      const errorData = await apiResponse.json();
+      return NextResponse.json(errorData, { status: apiResponse.status });
+    }
+
+    // Backend response is OK (2xx). Now, safely try to get the token.
+    // The response might be JSON with a token, or it could be empty (e.g., 204).
+    let token;
+    try {
+      const data = await apiResponse.json();
+      token = data.access_token;
+    } catch (e) {
+      // This will happen if the response body is not valid JSON (e.g., empty).
+      // We can proceed, but we need to check if a token was found.
+      console.warn("Could not parse JSON from auth response. This might be normal for a 204 response.");
     }
 
     // On successful login, extract the token and set it in a secure, HttpOnly cookie
-    const token = data.access_token;
     if (token) {
-      const cookieStore = await cookies();
+      const cookieStore = cookies();
       
       // Set the cookie
       cookieStore.set('better-auth.session_token', token, {
@@ -44,7 +54,7 @@ export async function POST(request: NextRequest) {
 
       return NextResponse.json({ success: true }, { status: 200 });
     } else {
-      // If the backend response was successful but had no token
+      // If the backend response was successful but we couldn't get a token.
       return NextResponse.json({ error: 'Authentication successful, but no token was provided.' }, { status: 500 });
     }
 
