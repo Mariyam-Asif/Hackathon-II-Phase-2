@@ -23,94 +23,33 @@ function LoginPageContent() {
     setError('');
 
     try {
-      // Get the backend API URL from environment variables
-      const apiUrl = process.env.NEXT_PUBLIC_BETTER_AUTH_URL || 'http://localhost:8000';
-      const loginUrl = `${apiUrl}/auth/login`;
-
-      // Direct API call to the backend authentication endpoint with timeout
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
-
-      const response = await fetch(loginUrl, {
+      // Use the internal API route to handle login.
+      // This route will proxy the request to the backend and set a secure HttpOnly cookie.
+      const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password }),
-        signal: controller.signal
       });
 
-      clearTimeout(timeoutId);
-
-      // Attempt to parse the response as JSON
-      let data;
-      try {
-        // Check if response is HTML by looking at the content type
-        const contentType = response.headers.get('content-type');
-
-        // If the response is HTML, try to get a text response instead of JSON
-        if (contentType && contentType.includes('text/html')) {
-          const textResponse = await response.text();
-          console.error('HTML response received:', textResponse.substring(0, 200));
-          throw new Error('Server configuration error: Received HTML instead of JSON from API endpoint');
-        }
-
-        data = await response.json();
-
-        // Additional check: if the response looks like HTML, it might have been parsed as a string
-        if (typeof data === 'string' && (data.startsWith('<!DOCTYPE') || data.startsWith('<html>'))) {
-          console.error('HTML string received:', data.substring(0, 200));
-          throw new Error('Server configuration error: Received HTML instead of JSON from API endpoint');
-        }
-      } catch (parseErr: unknown) {
-        // If JSON parsing fails, provide a meaningful error
-        console.error('JSON parsing error:', parseErr);
-        // Check if it's the specific error we're expecting
-        const message = (parseErr as any)?.message;
-        if (typeof message === 'string' && message.includes('HTML instead of JSON')) {
-          setError('Server configuration error: Please try again later or contact support.');
-        } else {
-          setError('Server error: Received unexpected response format from server');
-        }
-        return;
-      }
-
       if (!response.ok) {
-        // Check if it's a user not registered error
+        const data = await response.json();
+        // Check for specific error codes or messages from the backend
         if (data.code === 'USER_NOT_REGISTERED' || data.detail?.code === 'USER_NOT_REGISTERED') {
           setError(data.detail?.error || data.error || 'No account found with this email. Please register first.');
         } else {
           setError(data.detail?.error || data.error || 'Login failed');
         }
       } else {
-        // Successful login - store the token in a cookie and redirect
-        if (typeof window !== 'undefined' && data.access_token) {
-          // Set cookie to be accessible by middleware
-          const token = data.access_token;
-          const cookieName = 'better-auth.session_token';
-          // Expires in 7 days
-          const expiryDate = new Date();
-          expiryDate.setDate(expiryDate.getDate() + 7);
-          // Encode the token to handle special characters and set the cookie
-          document.cookie = `${cookieName}=${encodeURIComponent(token)}; expires=${expiryDate.toUTCString()}; path=/; SameSite=Lax;`;
-        }
+        // Successful login, the server has set the cookie.
+        // Now we can redirect to the dashboard.
         router.push(returnUrl);
-        router.refresh();
+        router.refresh(); // Refresh to ensure server components recognize the new user
       }
     } catch (err: any) {
       console.error('Login error:', err);
-      // Handle network errors, CORS issues, server unavailability, or timeout
-      if (err.name === 'TypeError' && err.message.includes('fetch')) {
-        setError('Network error: Unable to connect to the server. Please check your connection.');
-      } else if (err.name === 'AbortError') {
-        setError('Request timeout: The server took too long to respond. Please try again.');
-      } else if (err.message && (err.message.includes('HTML instead of JSON') || err.message.includes('response format'))) {
-        setError('Server configuration error: Please try again later or contact support.');
-      } else if (err.message && (err.message.includes('JSON') || err.message.includes('HTML'))) {
-        setError('Server configuration error: Please try again later or contact support.');
-      } else {
-        setError(err.message || 'An unexpected error occurred');
-      }
+      setError('An unexpected error occurred during login. Please try again.');
     } finally {
       setIsLoading(false);
     }
