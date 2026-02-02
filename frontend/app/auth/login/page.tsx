@@ -83,9 +83,16 @@ function LoginPageContent() {
           setError(data.detail?.error || data.error || 'Login failed');
         }
       } else {
-        // Successful login - store the token and redirect to return URL or dashboard
+        // Successful login - store the token in a cookie and redirect
         if (typeof window !== 'undefined' && data.access_token) {
-          localStorage.setItem('better-auth-session', data.access_token);
+          // Set cookie to be accessible by middleware
+          const token = data.access_token;
+          const cookieName = 'better-auth.session_token';
+          // Expires in 7 days
+          const expiryDate = new Date();
+          expiryDate.setDate(expiryDate.getDate() + 7);
+          // Set a secure, http-only cookie
+          document.cookie = `${cookieName}=${token}; expires=${expiryDate.toUTCString()}; path=/; SameSite=Lax;`;
         }
         router.push(returnUrl);
         router.refresh();
