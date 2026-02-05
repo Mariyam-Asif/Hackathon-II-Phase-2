@@ -1,5 +1,7 @@
 'use client';
 
+import { fetchWithAuth } from './api';
+
 // Authentication service for Better Auth integration
 // Handles login, registration, token management, and user session
 
@@ -31,23 +33,13 @@ class AuthService {
 
   // Login user and store token
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
-    const response = await fetch(`${this.baseUrl}/auth/login`, {
+    const data: AuthResponse = await fetchWithAuth(`${this.baseUrl}/auth/login`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
       body: JSON.stringify({
         email: credentials.email,
         password: credentials.password,
       }),
     });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.detail?.error || errorData.error || 'Login failed');
-    }
-
-    const data: AuthResponse = await response.json();
 
     // Store the token in localStorage for use with API calls
     if (typeof window !== 'undefined' && data.access_token) {
@@ -59,24 +51,14 @@ class AuthService {
 
   // Register new user
   async register(userData: RegisterData): Promise<AuthResponse> {
-    const response = await fetch(`${this.baseUrl}/auth/register`, {
+    const data: AuthResponse = await fetchWithAuth(`${this.baseUrl}/auth/register`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
       body: JSON.stringify({
         email: userData.email,
         password: userData.password,
         username: userData.username,
       }),
     });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.detail?.error || errorData.error || 'Registration failed');
-    }
-
-    const data: AuthResponse = await response.json();
 
     // Store the token in localStorage for use with API calls
     if (typeof window !== 'undefined' && data.access_token) {
@@ -95,11 +77,8 @@ class AuthService {
 
     // Call the backend logout endpoint (stateless, just for consistency)
     try {
-      await fetch(`${this.baseUrl}/auth/logout`, {
+      await fetchWithAuth(`${this.baseUrl}/auth/logout`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
       });
     } catch (error) {
       // Ignore logout errors as logout is client-side anyway
@@ -116,19 +95,10 @@ class AuthService {
     }
 
     try {
-      const response = await fetch(`${this.baseUrl}/auth/validate-token`, {
+      const data = await fetchWithAuth(`${this.baseUrl}/auth/validate-token`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify({ token: authToken }),
       });
-
-      if (!response.ok) {
-        return false;
-      }
-
-      const data = await response.json();
       return data.valid === true;
     } catch (error) {
       console.error('Token validation error:', error);

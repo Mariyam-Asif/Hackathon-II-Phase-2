@@ -1,15 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Suspense } from 'react';
-// For Better Auth v0.1.0-beta.13, signIn is accessed differently
-// We'll use a direct fetch to the backend authentication endpoint
+import { useAuth } from '../../auth-provider';
 import { LoginForm } from '../../../components/auth/LoginForm';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 // Wrap the actual component to handle the useSearchParams hook
 function LoginPageContent() {
+  const { login } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [error, setError] = useState('');
@@ -23,29 +23,8 @@ function LoginPageContent() {
     setError('');
 
     try {
-      // Use the internal API route to handle login.
-      // This route will proxy the request to the backend and set a secure HttpOnly cookie.
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (!response.ok) {
-        const data = await response.json();
-        // Check for specific error codes or messages from the backend
-        if (data.code === 'USER_NOT_REGISTERED' || data.detail?.code === 'USER_NOT_REGISTERED') {
-          setError(data.detail?.error || data.error || 'No account found with this email. Please register first.');
-        } else {
-          setError(data.detail?.error || data.error || 'Login failed');
-        }
-      } else {
-        // Successful login, the server has set the cookie.
-        // Use a full page reload to navigate to the dashboard to ensure the page is refreshed with the new cookie.
-        window.location.href = returnUrl;
-      }
+      await login(email, password);
+      router.push(returnUrl);
     } catch (err: any) {
       console.error('Login error:', err);
       setError('An unexpected error occurred during login. Please try again.');
