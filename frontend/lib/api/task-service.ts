@@ -55,7 +55,13 @@ export class TaskService {
   // Update an existing task
   static async updateTask(userId: string, taskId: string, taskData: Partial<Task>): Promise<Task> {
     try {
-      const response: any = await apiClient.put(`/${userId}/tasks/${taskId}`, taskData);
+      // Only send allowed fields to the backend (title, description, completed)
+      const updatePayload: any = {};
+      if (taskData.title !== undefined) updatePayload.title = taskData.title;
+      if (taskData.description !== undefined) updatePayload.description = taskData.description;
+      if (taskData.completed !== undefined) updatePayload.completed = taskData.completed;
+
+      const response: any = await apiClient.put(`/${userId}/tasks/${taskId}`, updatePayload);
 
       // The backend returns a TaskResponse object directly
       // Map the backend response to the frontend Task interface
@@ -77,6 +83,7 @@ export class TaskService {
   // Delete a task
   static async deleteTask(userId: string, taskId: string): Promise<void> {
     try {
+      // The delete endpoint returns 204 No Content
       await apiClient.delete(`/${userId}/tasks/${taskId}`);
     } catch (error) {
       console.error('Error deleting task:', error);

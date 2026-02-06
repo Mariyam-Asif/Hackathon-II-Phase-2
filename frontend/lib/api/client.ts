@@ -36,6 +36,11 @@ class ApiClient {
       throw new Error(errorData.error || `API request failed: ${response.status}`);
     }
 
+    // Handle 204 No Content responses (common for DELETE requests)
+    if (response.status === 204) {
+      return undefined as unknown as T; // Return undefined for 204 responses
+    }
+
     return response.json();
   }
 
