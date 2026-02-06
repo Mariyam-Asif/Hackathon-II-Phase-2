@@ -13,7 +13,7 @@ class ApiClient {
   ): Promise<T> {
     // Get the token from localStorage (where Better Auth would store it)
     const token = typeof window !== 'undefined'
-      ? localStorage.getItem('better-auth-session') || localStorage.getItem('auth-token')
+      ? localStorage.getItem('auth-token')
       : null;
 
     const headers = {
